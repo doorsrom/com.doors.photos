@@ -1,25 +1,17 @@
 package com.doors.photos;
 
-/**
- * Created by SHAJIB on 7/16/2017.
- */
-
 import java.util.Comparator;
 import java.util.HashMap;
-
-/**
- * Created by SHAJIB on 7/12/2017.
- */
 
 class MapComparator implements Comparator<HashMap<String, String>>
 {
     private final String key;
     private final String order;
 
-    public MapComparator(String key, String order)
+    public MapComparator()
     {
-        this.key = key;
-        this.order = order;
+        this.key = Function.KEY_TIMESTAMP;
+        this.order = "dsc";
     }
 
     public int compare(HashMap<String, String> first,

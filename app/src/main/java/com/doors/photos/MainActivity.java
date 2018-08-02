@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -33,16 +34,16 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final int REQUEST_PERMISSION_KEY = 1;
-    LoadAlbum loadAlbumTask;
-    GridView galleryGridView;
-    ArrayList<HashMap<String, String>> albumList = new ArrayList<HashMap<String, String>>();
+    private static final int REQUEST_PERMISSION_KEY = 1;
+    private LoadAlbum loadAlbumTask;
+    private GridView galleryGridView;
+    private final ArrayList<HashMap<String, String>> albumList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-         galleryGridView = (GridView) findViewById(R.id.galleryGridView);
+         galleryGridView = findViewById(R.id.galleryGridView);
 
         int iDisplayWidth = getResources().getDisplayMetrics().widthPixels ;
         Resources resources = getApplicationContext().getResources();
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if(!Function.hasPermissions(this, PERMISSIONS)){
+        if(Function.hasPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSION_KEY);
         }
     }
@@ -75,10 +76,10 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... args) {
             String xml = "";
 
-            String path = null;
-            String album = null;
-            String timestamp = null;
-            String countPhoto = null;
+            String path;
+            String album;
+            String timestamp;
+            String countPhoto;
             Uri uriExternal = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             Uri uriInternal = android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 albumList.add(Function.mappingInbox(album, path, timestamp, Function.converToTime(timestamp), countPhoto));
             }
             cursor.close();
-            Collections.sort(albumList, new MapComparator(Function.KEY_TIMESTAMP, "dsc")); // Arranging photo album by timestamp decending
+            Collections.sort(albumList, new MapComparator()); // Arranging photo album by timestamp decending
             return xml;
         }
 
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode)
         {
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if(!Function.hasPermissions(this, PERMISSIONS)){
+        if(Function.hasPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSION_KEY);
         }else{
             loadAlbumTask = new LoadAlbum();
@@ -164,8 +165,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 class AlbumAdapter extends BaseAdapter {
-    private Activity activity;
-    private ArrayList<HashMap< String, String >> data;
+    private final Activity activity;
+    private final ArrayList<HashMap< String, String >> data;
     public AlbumAdapter(Activity a, ArrayList < HashMap < String, String >> d) {
         activity = a;
         data = d;
@@ -181,15 +182,15 @@ class AlbumAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        AlbumViewHolder holder = null;
+        AlbumViewHolder holder;
         if (convertView == null) {
             holder = new AlbumViewHolder();
             convertView = LayoutInflater.from(activity).inflate(
                     R.layout.album_row, parent, false);
 
-            holder.galleryImage = (ImageView) convertView.findViewById(R.id.galleryImage);
-            holder.gallery_count = (TextView) convertView.findViewById(R.id.gallery_count);
-            holder.gallery_title = (TextView) convertView.findViewById(R.id.gallery_title);
+            holder.galleryImage = convertView.findViewById(R.id.galleryImage);
+            holder.gallery_count = convertView.findViewById(R.id.gallery_count);
+            holder.gallery_title = convertView.findViewById(R.id.gallery_title);
 
             convertView.setTag(holder);
         } else {
@@ -199,7 +200,7 @@ class AlbumAdapter extends BaseAdapter {
         holder.gallery_count.setId(position);
         holder.gallery_title.setId(position);
 
-        HashMap < String, String > song = new HashMap < String, String > ();
+        HashMap < String, String > song;
         song = data.get(position);
         try {
             holder.gallery_title.setText(song.get(Function.KEY_ALBUM));
@@ -210,7 +211,7 @@ class AlbumAdapter extends BaseAdapter {
                     .into(holder.galleryImage);
 
 
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         return convertView;
     }
 }

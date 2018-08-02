@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
@@ -16,35 +15,31 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-/**
- * Created by SHAJIB on 7/16/2017.
- */
-
-public class Function {
+class Function {
 
 
     static final String KEY_ALBUM = "album_name";
     static final String KEY_PATH = "path";
     static final String KEY_TIMESTAMP = "timestamp";
-    static final String KEY_TIME = "date";
+    private static final String KEY_TIME = "date";
     static final String KEY_COUNT = "date";
 
 
     public static  boolean hasPermissions(Context context, String... permissions) {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+        if (context != null && permissions != null) {
             for (String permission : permissions) {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
 
     public static HashMap<String, String> mappingInbox(String album, String path, String timestamp, String time, String count)
     {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put(KEY_ALBUM, album);
         map.put(KEY_PATH, path);
         map.put(KEY_TIMESTAMP, timestamp);
@@ -81,8 +76,7 @@ public class Function {
     public static float convertDpToPixel(float dp, Context context){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
+        return dp * (metrics.densityDpi / 160f);
     }
 
 }

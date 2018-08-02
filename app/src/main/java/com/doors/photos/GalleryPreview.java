@@ -12,21 +12,19 @@ import java.io.File;
 public class GalleryPreview extends AppCompatActivity {
 
     private View mContentView;
-    ImageView GalleryPreviewImg;
-    String path;
 
-    Boolean showUI = true;
+    private Boolean showUI = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_preview);
         Intent intent = getIntent();
-        path = intent.getStringExtra("path");
-        GalleryPreviewImg = (ImageView) findViewById(R.id.GalleryPreviewImg);
+        String path = intent.getStringExtra("path");
+        ImageView galleryPreviewImg = findViewById(R.id.GalleryPreviewImg);
         Glide.with(GalleryPreview.this)
                 .load(new File(path)) // Uri of the picture
-                .into(GalleryPreviewImg);
+                .into(galleryPreviewImg);
 
         mContentView = findViewById(R.id.relative_container);
         mContentView.setOnClickListener(new View.OnClickListener() {

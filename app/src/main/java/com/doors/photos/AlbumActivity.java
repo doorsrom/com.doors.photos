@@ -26,15 +26,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-/**
- * Created by SHAJIB on 7/16/2017.
- */
-
 public class AlbumActivity extends AppCompatActivity {
-    GridView galleryGridView;
-    ArrayList<HashMap<String, String>> imageList = new ArrayList<HashMap<String, String>>();
-    String album_name = "";
-    LoadAlbumImages loadAlbumTask;
+    private GridView galleryGridView;
+    private final ArrayList<HashMap<String, String>> imageList = new ArrayList<>();
+    private String album_name = "";
 
 
     @Override
@@ -47,7 +42,7 @@ public class AlbumActivity extends AppCompatActivity {
         setTitle(album_name);
 
 
-        galleryGridView = (GridView) findViewById(R.id.galleryGridView);
+        galleryGridView = findViewById(R.id.galleryGridView);
         int iDisplayWidth = getResources().getDisplayMetrics().widthPixels ;
         Resources resources = getApplicationContext().getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
@@ -61,7 +56,7 @@ public class AlbumActivity extends AppCompatActivity {
         }
 
 
-        loadAlbumTask = new LoadAlbumImages();
+        LoadAlbumImages loadAlbumTask = new LoadAlbumImages();
         loadAlbumTask.execute();
 
 
@@ -78,9 +73,9 @@ public class AlbumActivity extends AppCompatActivity {
         protected String doInBackground(String... args) {
             String xml = "";
 
-            String path = null;
-            String album = null;
-            String timestamp = null;
+            String path;
+            String album;
+            String timestamp;
             Uri uriExternal = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             Uri uriInternal = android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 
@@ -99,7 +94,7 @@ public class AlbumActivity extends AppCompatActivity {
                 imageList.add(Function.mappingInbox(album, path, timestamp, Function.converToTime(timestamp), null));
             }
             cursor.close();
-            Collections.sort(imageList, new MapComparator(Function.KEY_TIMESTAMP, "dsc")); // Arranging photo album by timestamp decending
+            Collections.sort(imageList, new MapComparator()); // Arranging photo album by timestamp decending
             return xml;
         }
 
@@ -123,8 +118,8 @@ public class AlbumActivity extends AppCompatActivity {
 
 
 class SingleAlbumAdapter extends BaseAdapter {
-    private Activity activity;
-    private ArrayList<HashMap< String, String >> data;
+    private final Activity activity;
+    private final ArrayList<HashMap< String, String >> data;
     public SingleAlbumAdapter(Activity a, ArrayList < HashMap < String, String >> d) {
         activity = a;
         data = d;
@@ -140,13 +135,13 @@ class SingleAlbumAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        SingleAlbumViewHolder holder = null;
+        SingleAlbumViewHolder holder;
         if (convertView == null) {
             holder = new SingleAlbumViewHolder();
             convertView = LayoutInflater.from(activity).inflate(
                     R.layout.single_album_row, parent, false);
 
-            holder.galleryImage = (ImageView) convertView.findViewById(R.id.galleryImage);
+            holder.galleryImage = convertView.findViewById(R.id.galleryImage);
 
             convertView.setTag(holder);
         } else {
@@ -154,7 +149,7 @@ class SingleAlbumAdapter extends BaseAdapter {
         }
         holder.galleryImage.setId(position);
 
-        HashMap < String, String > song = new HashMap < String, String > ();
+        HashMap < String, String > song;
         song = data.get(position);
         try {
 
@@ -163,7 +158,7 @@ class SingleAlbumAdapter extends BaseAdapter {
                     .into(holder.galleryImage);
 
 
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         return convertView;
     }
 }
